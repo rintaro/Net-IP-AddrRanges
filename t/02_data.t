@@ -15,7 +15,7 @@ sub list_ranges_ok {
             $ranges->subtract($adr);
         }
     }
-    $ranges->_dump;
+#    $ranges->_dump;
     is_deeply([$ranges->list_ranges], $expected, join(', ', @$input));
 }
 
@@ -377,9 +377,36 @@ list_ranges_ok [
 ];
 
 list_ranges_ok [
+    '+10.0.0.1',
+],[
+    '10.0.0.1-10.0.0.1',
+];
+
+list_ranges_ok [
+    '+10.0.0.1-10.0.0.1',
+],[
+    '10.0.0.1-10.0.0.1',
+];
+
+list_ranges_ok [
     'ffff::/16',
 ],[
-    '0.0.0.0-ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+    'ffff::-ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+];
+
+list_ranges_ok [
+    'fffc::/16',
+    'ffff::/16',
+],[
+    'fffc::-fffc:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+    'ffff::-ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+];
+
+list_ranges_ok [
+    'fffe::/16',
+    'ffff::/16',
+],[
+    'fffe::-ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
 ];
 
 done_testing();

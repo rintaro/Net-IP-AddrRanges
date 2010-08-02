@@ -63,10 +63,18 @@ sub subtract {
 }
 
 sub _add {
-    my($self, $min, $max, $dir) = @_;
+    my($self, $min, $max, $sub) = @_;
+    
+    if($max eq $masks_ip6[128]) {
+        my $i = 0;
+        $i++ while exists $self->[$i] && $self->[$i] lt $min;
+        splice @$self, $i, @$self-$i, $sub
+            ? ($i % 2 ? $min : ())
+            : ($i % 2 ? () : $min);
+        return;
+    }
 
     my $out = _incr($max);
-    # TODO: $out overfrow case ($max = ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff)
 
     if(not @$self) { # if emtpy
         @$self = ($min, $out);
@@ -79,7 +87,7 @@ sub _add {
     $j++ while exists $self->[$j] && $self->[$j] le $out;
 
     splice @$self, $i, $j-$i,
-        $dir
+        $sub
         ? (
             $i % 2 ? $min : (),
             $j % 2 ? $out : ()
@@ -90,40 +98,37 @@ sub _add {
         );
 }
 
+
 sub find {
     my $self = shift;
-    return 0 if not @$self;
 
+    return 0 if not @$self;
+    
     my $addr = _pack(shift);
 
+    # outside
+    return 0          if $addr lt $self->[0];
     return @$self % 2 if $addr ge $self->[-1];
 
+    my $i = 0;
     if(@$self < $BIN_THRESHOLD) {
-        my $i = 0;
         $i++ while exists $self->[$i] && $self->[$i] le $addr;
-        return $i % 2;
     }
     else {
-        # TODO: BINARY SEARCH
-        my $i = 0;
-        my($l,$r)=(0,$#$self);
+        my($l,$r)=(0, scalar @$self);
 
         while($l < $r) {
-            my $m = int(($l + $r) / 2);
-            if($self->[$m] le $addr) {
-                if(defined $i and $i == $m) {
-                    return ! ($i % 2);
-                }
-                else {
-                    $l = $i = $m;
-                }
+            $i = int(($l + $r) / 2);
+            if($addr lt $self->[$i]) {
+                last if $self->[$i - 1] le $addr;
+                $r = $i;
             }
             else {
-                $r = $m;
+                $l = $i;
             }
         }
-        return $i % 2;
     }
+    return $i % 2;
 }
 
 # Util functions below
