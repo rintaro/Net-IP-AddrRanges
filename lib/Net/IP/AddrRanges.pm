@@ -101,7 +101,6 @@ sub _add {
 
 sub find {
     my $self = shift;
-
     return 0 if not @$self;
     
     my $addr = _pack(shift);
@@ -140,8 +139,8 @@ sub _pack {
 
 sub _pack_ip4 {
     my $in = shift;
-    return if not $in =~ /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
-    my $str = "\x00" x 12;
+    return if not $in =~ /^\d{1,3}(?:\.\d{1,3}){3}$/;
+    my $str = "\x00" x 12; # 96bit padding
     for(split /\./, $in) {
         return if $_ > 255;
         $str .= pack('C', $_);
@@ -202,8 +201,8 @@ sub _unpack_ip4 {
 
 sub _unpack_ip6 {
     my $v6 = join ':', unpack 'H4H4H4H4H4H4H4H4', shift;
-    $v6 =~ s/(^|:)0{1,3}/${1}/g;
-    $v6 =~ s/(?:(?:^|:)0){2,}(?::)?/::/;
+    $v6 =~ s/(^|:)0{1,3}/${1}/g; # omit leading zeroes
+    $v6 =~ s/(?:(?:^|:)0){2,}(?::)?/::/; # group of zeroes
     $v6;
 }
 
