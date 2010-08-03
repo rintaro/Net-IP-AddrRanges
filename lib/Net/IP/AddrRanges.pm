@@ -264,12 +264,11 @@ Net::IP::AddrRanges - IP address ranges to match
     '192.168.1.64/255.255.255.240', # netmask style
     '192.168.3.23',                 # single address
     '64::1/64',                     # IPv6 address range
-    '192.168.3.23-192.168.12.3',    # from-to
+    '192.168.5.23-192.168.12.3',    # from-to
   );
   $ranges->subtract('192.168.0.64/27'); # excludes this range
 
   $ranges->find('192.168.0.1');  # True 
-  $ranges->find('10.192.21.1');  # False
   $ranges->find('192.168.0.70'); # False
 
 =head1 DESCRIPTION
@@ -286,16 +285,16 @@ Construct new object. any arguments are passed to add();
 
 =item add(@ranges)
 
-Adds IP address ranges. this accepts single, hyphenated, netmask style and CIDR
-style IP address ranges.
+Adds IP address ranges to the list. this accepts single, hyphenated, netmask style
+and CIDR style IP address ranges.
 
 =item subtract(@ranges)
 
-Subtract IP address ranges. this accepts same as C<add()>
+Subtract IP address ranges from the list. this accepts same arguments as C<add()>
 
 =item find($ip_address)
 
-Find passed ip address from list. Returns true if found, false otherwise. 
+Finds passed IP address from the list. Returns true if found, false otherwise. 
 
 =back
 

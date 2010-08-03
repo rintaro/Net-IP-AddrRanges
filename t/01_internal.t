@@ -1,4 +1,4 @@
-use Test::More;
+use Test::More tests => 12;
 
 use strict;
 use warnings;
@@ -27,6 +27,4 @@ is((_unpack _decr _pack '2001:0db8:0000:0000:1234:0000:9abc:0000'), '2001:db8::1
 
 is((_unpack _pack '0000:0000:0000:0000:1234:0000:0000:9abc'), '::1234:0:0:9abc', 'pack_ipv6_2');
 is((_unpack _pack '1234:1234:0000:1234:0000:0000:0000:0000'), '1234:1234:0:1234::', 'pack_ipv6_3');
-
-done_testing();
 

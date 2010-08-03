@@ -1,4 +1,4 @@
-use Test::More;
+use Test::More tests => 50;
 
 use Net::IP::AddrRanges;
 
@@ -408,5 +408,3 @@ list_ranges_ok [
 ],[
     'fffe::-ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
 ];
-
-done_testing();
